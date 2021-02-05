@@ -22,7 +22,7 @@
       "name": "%install_name%",
       "link": "%SystemDrive%/Users/Public/Desktop/%install_name%.lnk",
       "target": "%install_folder%/wordpad.exe",
-      "icon": "%install_folder%/wordpad.exe,0",
+      "icon": "%install_folder%/icon/Installer.ico",
       "startin": "%install_folder%"
     },
     {
@@ -30,7 +30,7 @@
       "name": "%install_name%",
       "link": "%ProgramData%/Microsoft/Windows/Start Menu/Programs/%install_name%/%install_name%.lnk",
       "target": "%install_folder%/wordpad.exe",
-      "icon": "%install_folder%/wordpad.exe,0",
+      "icon": "%install_folder%/icon/Installer.ico",
       "startin": "%install_folder%"
     },
     {
@@ -51,6 +51,12 @@
       "UninstallString": "%install_folder%/Uninstaller.exe",
       "DisplayIcon": "%install_folder%/Uninstaller.exe,0",
       "Publisher": "%publisher%"
+    },
+    {
+      "type": "execute",
+      "command": "%install_folder%/prerequisite/vcredist_x86.exe",
+      "parameters": "",
+	  "visible": "true"
     }
   ],
   "on_uninstall": [

@@ -4,7 +4,7 @@ SET MSBUILD="%programfiles(x86)%\Microsoft Visual Studio\2019\Community\MSBuild\
 REM set path of install source
 SET COMPILE_SOURCE="C:\Program Files\Windows NT\Accessories"
 SET INSTALL_SOURCE=.\setup-image
-xcopy %COMPILE_SOURCE% %INSTALL_SOURCE%\ /s /e /h
+xcopy %COMPILE_SOURCE% %INSTALL_SOURCE%\ /s /e /h /y
 
 copy /y /b .\setup.json .\Installer\setup.json
 copy /y /b .\setup.json .\Uninstaller\setup.json

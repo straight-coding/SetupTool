@@ -35,7 +35,7 @@ using namespace rapidjson;
 #ifdef _DEBUG
 #pragma comment(lib, "../Debug/zlib.lib")
 #else
-#pragma comment(lib, "../Release/zlib.lib")
+#pragma comment(lib, "../zlib/Release/zlib.lib")
 #endif
 
 # pragma comment(lib, "wbemuuid.lib")
@@ -1921,6 +1921,13 @@ public:
 						//(wcsicmp(strCmd.Left(4), L"reg.") != 0))
 					{
 						strCmd = L"cmd.exe /c \"" + strCmd + L"\"";
+					}
+					else
+					{
+						if (strCmd.Left(1) != L"\"")
+							strCmd = L"\"" + strCmd;
+						if (strCmd.Right(1) != L"\"")
+							strCmd += L"\"";
 					}
 
 					CString strFormat = m_LogFormats[L"execute"];
