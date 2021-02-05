@@ -1,3 +1,9 @@
+/*
+  InstallUtil.h
+  Author: Straight Coder<simpleisrobust@gmail.com>
+  Date: Feb. 04, 2021
+*/
+
 #ifndef _INSTALL_UTIL_
 #define _INSTALL_UTIL_
 
@@ -381,7 +387,7 @@ public:
 
 		strMatchPath = strDir + L"*.*";
 
-		for (int iItem = 0; ;)  // will now insert the items and subitems into the list view.
+		for (int iItem = 0; ;)
 		{
 			if (bFirst)
 			{

@@ -1,6 +1,8 @@
-
-// UninstallerDlg.cpp : implementation file
-//
+/*
+  UninstallerDlg.cpp
+  Author: Straight Coder<simpleisrobust@gmail.com>
+  Date: Feb. 04, 2021
+*/
 
 #include "pch.h"
 #include "framework.h"

@@ -1,3 +1,9 @@
+/*
+  ThreadBase.h
+  Author: Straight Coder<simpleisrobust@gmail.com>
+  Date: Feb. 04, 2021
+*/
+
 #pragma once
 
 #include <afxwin.h>

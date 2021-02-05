@@ -1,6 +1,8 @@
-
-// InstallerDlg.cpp : implementation file
-//
+/*
+  InstallerDlg.cpp
+  Author: Straight Coder<simpleisrobust@gmail.com>
+  Date: Feb. 04, 2021
+*/
 
 #include "pch.h"
 #include "framework.h"
@@ -329,7 +331,6 @@ void CInstallerDlg::OnBnClickedButtonInstall()
 
 	CString strZipFile = CInstallUtil::GetTempFile(L"pack-", L".zip");
 	m_Installer.AppendRecyle(strZipFile);
-
 	m_InstallThread.SetUnzipInfo(L"ZIP", IDR_ZIP, strZipFile);
 	if (m_InstallThread.Start(&m_Installer))
 	{
