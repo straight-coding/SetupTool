@@ -22,6 +22,7 @@ public:
 	virtual void DoDataExchange(CDataExchange* pDX);
 	CString m_strSourceFolder;
 	CString m_strTargetFolder;
+	afx_msg void OnBnClickedButtonBrowse();
 };
 
 

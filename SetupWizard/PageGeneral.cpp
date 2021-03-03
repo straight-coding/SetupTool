@@ -21,8 +21,6 @@ CPageGeneral::~CPageGeneral()
 }
 
 BEGIN_MESSAGE_MAP(CPageGeneral, CPropertyPage)
-	ON_WM_ACTIVATE()
-	ON_WM_ACTIVATE()
 END_MESSAGE_MAP()
 
 // CPageGeneral message handlers
@@ -60,6 +58,26 @@ BOOL CPageGeneral::OnSetActive()
 	m_strProductVersion = GetValue(L"product_version");
 	m_strPublisher = GetValue(L"publisher");
 
+	m_ctrlPlatform.ResetContent();
+	m_ctrlPlatform.AddString(L"x86");
+	m_ctrlPlatform.AddString(L"x64");
+	CString strPlatform = GetValue(L"platform");
+	int idx = m_ctrlPlatform.FindString(-1, strPlatform);
+	if (idx >= 0)
+		m_ctrlPlatform.SetCurSel(idx);
+	else
+		m_ctrlPlatform.SetCurSel(0);
+
+	m_ctrlLanguage.ResetContent();
+	m_ctrlLanguage.AddString(L"en");
+	m_ctrlLanguage.AddString(L"zh");
+	CString strLanguage = GetValue(L"language");
+	idx = m_ctrlLanguage.FindString(-1, strLanguage);
+	if (idx >= 0)
+		m_ctrlLanguage.SetCurSel(idx);
+	else
+		m_ctrlLanguage.SetCurSel(0);
+
 	UpdateData(FALSE);
 
 	return CPropertyPage::OnSetActive();
@@ -73,6 +91,19 @@ BOOL CPageGeneral::OnKillActive()
 	SetValue(L"product_name", m_strProductName);
 	SetValue(L"product_version", m_strProductVersion);
 	SetValue(L"publisher", m_strPublisher);
+
+	CString strPlatform = L"x86";
+	m_ctrlPlatform.GetLBText(m_ctrlPlatform.GetCurSel(), strPlatform);
+	SetValue(L"platform", strPlatform);
+
+	CString strLanguage = L"en";
+	m_ctrlLanguage.GetLBText(m_ctrlLanguage.GetCurSel(), strLanguage);
+	SetValue(L"language", strLanguage);
+
+	CString strDefaultPath = L"%SystemDrive%/%programfiles(x86)%/%product_name%";
+	if (strPlatform == L"x64")
+		strDefaultPath = L"%SystemDrive%/%programfiles%/%product_name%";
+	SetValue(L"install_folder", strDefaultPath);
 
 	return CPropertyPage::OnKillActive();
 }

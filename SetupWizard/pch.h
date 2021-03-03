@@ -12,14 +12,21 @@
 
 #include "framework.h"
 
+#include <algorithm>
 #include <map>
+#include <vector>
 
 using namespace std;
 
-map<CString, CString> g_mapPairs;
+#include "../include/InstallUtil.h"
 
 void SetupDefaultPairs();
 void SetValue(CString key, CString value);
 CString GetValue(CString key);
+
+vector<CString> GetCheckList();
+void ClearCheckList();
+void AppendCheckList(CString strPath);
+void RemoveFromCheckList(CString strPath);
 
 #endif //PCH_H

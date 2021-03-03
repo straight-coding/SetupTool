@@ -59,7 +59,7 @@ BOOL CInstallerApp::InitInstance()
 		CString strZipFile = aryArguments[2];
 
 		CStringArray aryFileList;
-		CInstallUtil::ScanFolder(strFolder, aryFileList);
+		CInstallUtil::ScanFolder(strFolder, L"*.*", aryFileList);
 		for (int i = 0; i < aryFileList.GetCount(); i++)
 		{
 			TRACE(L"%s\r\n", aryFileList[i]);

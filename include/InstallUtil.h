@@ -123,14 +123,14 @@ public:
 		return L"";
 	}
 
-	static BOOL ScanFolder(const wchar_t* szFolder, CStringArray& aryResultList)
+	static BOOL ScanFolder(const wchar_t* szFolder, const wchar_t* szFilter, CStringArray& aryResultList)
 	{
 		CString strFolder = szFolder;
 		strFolder.Replace(L"/", L"\\");
 		if (strFolder.Right(1) != L"\\")
 			strFolder += L"\\";
 
-		CString strFilter = strFolder + L"*.*";
+		CString strFilter = strFolder + szFilter;
 
 		long	hFile = -1;
 		BOOL	bFirst = TRUE;
@@ -168,7 +168,7 @@ public:
 
 		for (int i = 0; i < arySubFolders.GetCount(); i++)
 		{
-			ScanFolder(arySubFolders[i], aryResultList);
+			ScanFolder(arySubFolders[i], L"*.*", aryResultList);
 		}
 
 		if (hFile > 0)
@@ -1593,7 +1593,7 @@ public:
 	{
 		CString strFolder = L"C:\\test≤‚ ‘";
 		CStringArray aryFileList;
-		CInstallUtil::ScanFolder(strFolder, aryFileList);
+		CInstallUtil::ScanFolder(strFolder, L"*.*", aryFileList);
 		for (int i = 0; i < aryFileList.GetCount(); i++)
 		{
 			TRACE(L"%s\r\n", aryFileList[i]);

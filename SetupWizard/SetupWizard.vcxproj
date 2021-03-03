@@ -201,6 +201,18 @@
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="CGridListCtrlEx\CGridColumnTraitCombo.cpp" />
+    <ClCompile Include="CGridListCtrlEx\CGridColumnTraitDateTime.cpp" />
+    <ClCompile Include="CGridListCtrlEx\CGridColumnTraitEdit.cpp" />
+    <ClCompile Include="CGridListCtrlEx\CGridColumnTraitHyperLink.cpp" />
+    <ClCompile Include="CGridListCtrlEx\CGridColumnTraitImage.cpp" />
+    <ClCompile Include="CGridListCtrlEx\CGridColumnTraitMultilineEdit.cpp" />
+    <ClCompile Include="CGridListCtrlEx\CGridColumnTraitText.cpp" />
+    <ClCompile Include="CGridListCtrlEx\CGridListCtrlEx.cpp" />
+    <ClCompile Include="CGridListCtrlEx\CGridListCtrlGroups.cpp" />
+    <ClCompile Include="CGridListCtrlEx\CGridRowTraitText.cpp" />
+    <ClCompile Include="CGridListCtrlEx\CGridRowTraitXP.cpp" />
+    <ClCompile Include="CGridListCtrlEx\ViewConfigSection.cpp" />
     <ClCompile Include="PageCreater.cpp" />
     <ClCompile Include="PageCheckRunning.cpp" />
     <ClCompile Include="PageExecutor.cpp" />

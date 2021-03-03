@@ -13,6 +13,8 @@ public:
 
 	virtual ~CPageCheckRunning();
 
+	void ReloadList();
+
 protected:
 	DECLARE_MESSAGE_MAP()
 public:
@@ -20,6 +22,16 @@ public:
 	virtual BOOL OnSetActive();
 	virtual BOOL OnKillActive();
 	virtual void DoDataExchange(CDataExchange* pDX);
+
+	afx_msg void OnBnClickedButtonAdd();
+	afx_msg void OnBnClickedButtonRemove();
+
+	CListBox m_ctrlSrcFiles;
+	CListBox m_ctrlCheckFiles;
+	afx_msg void OnLbnSelchangeListFilesCheck();
+	afx_msg void OnLbnSelchangeListFilesSrc();
+	afx_msg void OnLbnDblclkListFilesSrc();
+	afx_msg void OnLbnDblclkListFilesCheck();
 };
 
 

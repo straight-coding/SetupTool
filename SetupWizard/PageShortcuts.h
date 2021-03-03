@@ -1,5 +1,7 @@
 #pragma once
 
+#include "..\CGridListCtrlEx\CGridListCtrlGroups.h"
+
 // CPageShortcuts
 
 class CPageShortcuts : public CPropertyPage
@@ -20,6 +22,9 @@ public:
 	virtual BOOL OnSetActive();
 	virtual BOOL OnKillActive();
 	virtual void DoDataExchange(CDataExchange* pDX);
+
+	CGridListCtrlGroups m_ListCtrl;
+	CImageList m_ImageList;
 };
 
 

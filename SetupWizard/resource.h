@@ -24,6 +24,12 @@
 #define IDC_EDIT_PUBLISHER2             1006
 #define IDC_EDIT_SRC_FOLDER             1006
 #define IDC_BUTTON_BROWSE               1007
+#define IDC_LIST_FILES_CHECK            1009
+#define IDC_BUTTON_ADD                  1010
+#define IDC_BUTTON_REMOVE               1011
+#define IDC_LIST1                       1011
+#define IDC_LIST_SHORTCUTS              1011
+#define IDC_LIST_FILES_SRC              1012
 
 // Next default values for new objects
 // 
@@ -31,7 +37,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        142
 #define _APS_NEXT_COMMAND_VALUE         32771
-#define _APS_NEXT_CONTROL_VALUE         1008
+#define _APS_NEXT_CONTROL_VALUE         1012
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif

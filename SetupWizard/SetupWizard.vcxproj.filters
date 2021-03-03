@@ -13,6 +13,9 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="CGridListCtrlEx">
+      <UniqueIdentifier>{fec7f07a-fe49-40e6-8d11-a2ca64fd3907}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SetupWizard.h">
@@ -79,6 +82,42 @@
     </ClCompile>
     <ClCompile Include="PageCreater.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="CGridListCtrlEx\CGridColumnTraitCombo.cpp">
+      <Filter>CGridListCtrlEx</Filter>
+    </ClCompile>
+    <ClCompile Include="CGridListCtrlEx\CGridColumnTraitDateTime.cpp">
+      <Filter>CGridListCtrlEx</Filter>
+    </ClCompile>
+    <ClCompile Include="CGridListCtrlEx\CGridColumnTraitEdit.cpp">
+      <Filter>CGridListCtrlEx</Filter>
+    </ClCompile>
+    <ClCompile Include="CGridListCtrlEx\CGridColumnTraitHyperLink.cpp">
+      <Filter>CGridListCtrlEx</Filter>
+    </ClCompile>
+    <ClCompile Include="CGridListCtrlEx\CGridColumnTraitImage.cpp">
+      <Filter>CGridListCtrlEx</Filter>
+    </ClCompile>
+    <ClCompile Include="CGridListCtrlEx\CGridColumnTraitMultilineEdit.cpp">
+      <Filter>CGridListCtrlEx</Filter>
+    </ClCompile>
+    <ClCompile Include="CGridListCtrlEx\CGridColumnTraitText.cpp">
+      <Filter>CGridListCtrlEx</Filter>
+    </ClCompile>
+    <ClCompile Include="CGridListCtrlEx\CGridListCtrlEx.cpp">
+      <Filter>CGridListCtrlEx</Filter>
+    </ClCompile>
+    <ClCompile Include="CGridListCtrlEx\CGridListCtrlGroups.cpp">
+      <Filter>CGridListCtrlEx</Filter>
+    </ClCompile>
+    <ClCompile Include="CGridListCtrlEx\CGridRowTraitText.cpp">
+      <Filter>CGridListCtrlEx</Filter>
+    </ClCompile>
+    <ClCompile Include="CGridListCtrlEx\CGridRowTraitXP.cpp">
+      <Filter>CGridListCtrlEx</Filter>
+    </ClCompile>
+    <ClCompile Include="CGridListCtrlEx\ViewConfigSection.cpp">
+      <Filter>CGridListCtrlEx</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
