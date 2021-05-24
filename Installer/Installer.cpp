@@ -1,6 +1,8 @@
-
-// Installer.cpp : Defines the class behaviors for the application.
-//
+/*
+  Installer.cpp
+  Author: Straight Coder<simpleisrobust@gmail.com>
+  Date: Feb. 04, 2021
+*/
 
 #include "pch.h"
 #include "framework.h"
@@ -59,7 +61,7 @@ BOOL CInstallerApp::InitInstance()
 		CString strZipFile = aryArguments[2];
 
 		CStringArray aryFileList;
-		CInstallUtil::ScanFolder(strFolder, L"*.*", aryFileList);
+		CInstallUtil::ScanFolder(strFolder, aryFileList);
 		for (int i = 0; i < aryFileList.GetCount(); i++)
 		{
 			TRACE(L"%s\r\n", aryFileList[i]);

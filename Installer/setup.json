@@ -54,7 +54,7 @@
     },
     {
       "type": "execute",
-      "command": "%install_folder%/prerequisite/vcredist_x86.exe",
+      "command": "%install_folder%/prerequisite/VC_redist_2019_x64.exe",
       "parameters": "",
 	  "visible": "true"
     }

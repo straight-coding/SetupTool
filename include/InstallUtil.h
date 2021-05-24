@@ -41,7 +41,7 @@ using namespace rapidjson;
 #ifdef _DEBUG
 #pragma comment(lib, "../Debug/zlib.lib")
 #else
-#pragma comment(lib, "../zlib/Release/zlib.lib")
+#pragma comment(lib, "../Release/zlib.lib")
 #endif
 
 # pragma comment(lib, "wbemuuid.lib")
@@ -123,14 +123,14 @@ public:
 		return L"";
 	}
 
-	static BOOL ScanFolder(const wchar_t* szFolder, const wchar_t* szFilter, CStringArray& aryResultList)
+	static BOOL ScanFolder(const wchar_t* szFolder, CStringArray& aryResultList)
 	{
 		CString strFolder = szFolder;
 		strFolder.Replace(L"/", L"\\");
 		if (strFolder.Right(1) != L"\\")
 			strFolder += L"\\";
 
-		CString strFilter = strFolder + szFilter;
+		CString strFilter = strFolder + L"*.*";
 
 		long	hFile = -1;
 		BOOL	bFirst = TRUE;
@@ -168,7 +168,7 @@ public:
 
 		for (int i = 0; i < arySubFolders.GetCount(); i++)
 		{
-			ScanFolder(arySubFolders[i], L"*.*", aryResultList);
+			ScanFolder(arySubFolders[i], aryResultList);
 		}
 
 		if (hFile > 0)
@@ -387,7 +387,7 @@ public:
 
 		strMatchPath = strDir + L"*.*";
 
-		for (int iItem = 0; ;)
+		for (int iItem = 0; ;)  // will now insert the items and subitems into the list view.
 		{
 			if (bFirst)
 			{
@@ -839,23 +839,139 @@ public:
 		return strMD5;
 	}
 
+	static CString GetProcessNameByID(DWORD processID)
+	{
+		WCHAR szProcessName[MAX_PATH] = L"";
+		HMODULE hMod;
+		DWORD cbNeeded;
+		CString strProcessName = L"";
+
+		HANDLE hProcess = OpenProcess(PROCESS_QUERY_INFORMATION | PROCESS_VM_READ, FALSE, processID);
+		if (hProcess != NULL)
+		{
+			if (EnumProcessModules(hProcess, &hMod, sizeof(hMod), &cbNeeded))
+			{
+				GetModuleBaseName(hProcess, hMod, szProcessName, sizeof(szProcessName) / sizeof(WCHAR));
+				strProcessName = szProcessName;
+
+				MODULEINFO modelInfo;
+				if (GetModuleInformation(hProcess, hMod, &modelInfo, sizeof(modelInfo)))
+				{
+					int debug = 0;
+				}
+			}
+		}
+		CloseHandle(hProcess);
+		return strProcessName;
+	}
+
+	static BOOL ListProcessModules(DWORD dwPID, CString& strModuleName, CString& exePath)
+	{
+		HANDLE hModuleSnap = INVALID_HANDLE_VALUE;
+		MODULEENTRY32 me32;
+
+		strModuleName = "";
+		exePath = "";
+
+		// Take a snapshot of all modules in the specified process.
+		hModuleSnap = CreateToolhelp32Snapshot(TH32CS_SNAPMODULE, dwPID);
+		if (hModuleSnap == INVALID_HANDLE_VALUE)
+		{
+			TRACE(TEXT("CreateToolhelp32Snapshot (of modules)"));
+			return(FALSE);
+		}
+
+		// Set the size of the structure before using it.
+		me32.dwSize = sizeof(MODULEENTRY32);
+
+		// Retrieve information about the first module,
+		// and exit if unsuccessful
+		if (!Module32First(hModuleSnap, &me32))
+		{
+			TRACE(TEXT("Module32First"));  // show cause of failure
+			CloseHandle(hModuleSnap);      // clean the snapshot object
+			return(FALSE);
+		}
+
+		// Now walk the module list of the process,
+		// and display information about each module
+		do
+		{
+			strModuleName = me32.szModule;
+			exePath = me32.szExePath;
+			if (!exePath.IsEmpty())
+				break;
+
+			TRACE(TEXT("\n\n     MODULE NAME:     %s"), me32.szModule);
+			TRACE(TEXT("\n     Executable     = %s"), me32.szExePath);
+			TRACE(TEXT("\n     Process ID     = 0x%08X"), me32.th32ProcessID);
+			TRACE(TEXT("\n     Ref count (g)  = 0x%04X"), me32.GlblcntUsage);
+			TRACE(TEXT("\n     Ref count (p)  = 0x%04X"), me32.ProccntUsage);
+			TRACE(TEXT("\n     Base address   = 0x%08X"), (DWORD)me32.modBaseAddr);
+			TRACE(TEXT("\n     Base size      = %d"), me32.modBaseSize);
+		} while (Module32Next(hModuleSnap, &me32));
+
+		CloseHandle(hModuleSnap);
+		return(TRUE);
+	}
+
+	static map<DWORD, map<CString, CString>> GetProcessInfo(void)
+	{
+		map<DWORD, map<CString, CString>> proceses;
+		DWORD aProcesses[1024], cbNeeded, cProcesses;
+
+		unsigned int i;
+		if (EnumProcesses(aProcesses, sizeof(aProcesses), &cbNeeded))
+		{
+			// Calculate how many process identifiers were returned.
+			cProcesses = cbNeeded / sizeof(DWORD);
+			// Print the name and process identifier for each process.
+			for (i = 0; i < cProcesses; i++)
+			{
+				if (aProcesses[i] != 0)
+				{
+					CString strModuleName, exePath;
+					ListProcessModules(aProcesses[i], strModuleName, exePath);
+
+					//CString strProcessName = GetProcessNameByID(aProcesses[i]);
+					if (!strModuleName.IsEmpty())
+					{
+						map<CString, CString> processInfo;
+						processInfo[L"CommandLine"] = exePath;
+						processInfo[L"ExecutablePath"] = exePath;
+
+						proceses[aProcesses[i]] = processInfo;
+					}
+				}
+			}
+		}
+		return proceses;
+	}
+/*
 	static map<DWORD, map<CString, CString>> GetProcessInfo(void)
 	{
 		map<DWORD, map<CString, CString>> proceses;
 
 		HRESULT hr = 0;
+		CString strLog;
 		IWbemLocator* WbemLocator = NULL;
 		IWbemServices* WbemServices = NULL;
 		IEnumWbemClassObject* EnumWbem = NULL;
 
 		hr = CoInitializeEx(0, COINIT_MULTITHREADED);
 		if (FAILED(hr))
+		{
+			strLog.Format(L"CoInitialize %08lX", hr);
+			OutputDebugString(strLog);
 			return proceses;
+		}
 
 		hr = CoInitializeSecurity(NULL, -1, NULL, NULL, RPC_C_AUTHN_LEVEL_DEFAULT, RPC_C_IMP_LEVEL_IMPERSONATE, NULL, EOAC_NONE, NULL);
 		if (FAILED(hr))
 		{
 			CoUninitialize();
+			strLog.Format(L"CoInitializeSecurity %08lX", hr);
+			OutputDebugString(strLog);
 			return proceses;
 		}
 
@@ -864,6 +980,8 @@ public:
 		if (FAILED(hr) || (WbemLocator == NULL))
 		{
 			CoUninitialize();
+			strLog.Format(L"CoCreateInstance %08lX", hr);
+			OutputDebugString(strLog);
 			return proceses;
 		}
 
@@ -873,6 +991,8 @@ public:
 			WbemLocator->Release();
 
 			CoUninitialize();
+			strLog.Format(L"ConnectServer %08lX", hr);
+			OutputDebugString(strLog);
 			return proceses;
 		}
 
@@ -883,6 +1003,8 @@ public:
 			WbemLocator->Release();
 
 			CoUninitialize();
+			strLog.Format(L"ExecQuery %08lX", hr);
+			OutputDebugString(strLog);
 			return proceses;
 		}
 
@@ -923,7 +1045,8 @@ public:
 
 		return proceses;
 	}
-
+*/
+	/*
 	static vector<CString> GetProcessModules(DWORD processID)
 	{
 		vector<CString> modules;
@@ -978,7 +1101,7 @@ public:
 		}
 		return processes;
 	}
-
+	*/
 	//https://stackoverflow.com/questions/33841911/c-how-do-i-create-a-shortcut-in-the-start-menu-on-windows
 	static BOOL CreateLink(const wchar_t* lpszLinkName, const wchar_t* lpszLinkPath, const wchar_t* lpszTargetPath, const wchar_t* lpszTargetFolder, const wchar_t* lpszIconPath)
 	{
@@ -1593,7 +1716,7 @@ public:
 	{
 		CString strFolder = L"C:\\test≤‚ ‘";
 		CStringArray aryFileList;
-		CInstallUtil::ScanFolder(strFolder, L"*.*", aryFileList);
+		CInstallUtil::ScanFolder(strFolder, aryFileList);
 		for (int i = 0; i < aryFileList.GetCount(); i++)
 		{
 			TRACE(L"%s\r\n", aryFileList[i]);
@@ -1755,10 +1878,15 @@ public:
 	void Uninstall()
 	{
 		CString strUninstaller = GetUninstaller();
+		strUninstaller.Replace(L"/", L"\\");
 
 		RunScript(m_OnUninstall);
 
 		CString strCodebase = CInstallUtil::GetCodeBase();
+		int idx = strUninstaller.ReverseFind('\\');
+		if (idx >= 0)
+			strCodebase = strUninstaller.Left(idx+1);
+
 		map<CString, map<CString, CString>> installedFiles = ScanInstalledFiles(strCodebase); //path ==> setupMD5/MD5
 
 		map<CString, CString> md5;

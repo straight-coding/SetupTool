@@ -74,7 +74,7 @@ BOOL CUninstallerDlg::OnInitDialog()
 	CString strFormat;
 	strFormat.LoadStringW(IDS_CONFIRM);
 	CString strWarn;
-	strWarn.Format(strFormat, m_Installer.GetProductName() + L" @ " + CInstallUtil::GetCodeBase());
+	strWarn.Format(strFormat, m_Installer.GetProductName());// +L" @ " + CInstallUtil::GetCodeBase());
 
 	int nArgs;
 	CStringArray aryArguments;

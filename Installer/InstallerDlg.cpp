@@ -80,13 +80,27 @@ BOOL CInstallerDlg::OnInitDialog()
 
 	UpdateData(FALSE);
 
+	CString strRunning = m_Installer.GetRunning();
+	if (!strRunning.IsEmpty())
+	{
+		CString strFormat, strWarn;
+
+		strFormat.LoadStringW(IDS_STILL_RUNNING);
+		strWarn.Format(strFormat, L"\r\n" + strRunning);
+
+		::MessageBox(NULL, strWarn, m_strTitle, MB_ICONINFORMATION | MB_SETFOREGROUND | MB_TOPMOST | MB_OK);
+
+		EndDialog(0);
+		return TRUE;
+	}
+
 	CString strUninstaller = m_Installer.GetUninstaller();
 	if (!strUninstaller.IsEmpty())
 	{
 		CString strFormat;
 		strFormat.LoadStringW(IDS_CONFIRM);
 		CString strWarn;
-		strWarn.Format(strFormat, m_Installer.GetProductName() + L" @ " + CInstallUtil::GetCodeBase());
+		strWarn.Format(strFormat, m_Installer.GetProductName());// +L" @ " + CInstallUtil::GetCodeBase());
 
 		if (IDYES != ::MessageBox(NULL, strWarn, m_strTitle, MB_ICONINFORMATION | MB_SETFOREGROUND | MB_TOPMOST | MB_YESNO))
 		{
