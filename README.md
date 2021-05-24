@@ -105,11 +105,11 @@
 * Installer is a x86 program even though your application is x64
 * The idea is:
   * Copy everything what you want to install to the folder specified by `INSTALL_SOURCE`;
-  * Copy the script file (.json) to the source folder of both Installer and Uninstaller;
+  * Copy the script file (.json) to the project folder of both Installer and Uninstaller;
   * Build Uninstaller and copy it to the folder specified by `INSTALL_SOURCE`;
   * Built the Installer as a compressing tool;
   * Using the above tool to compress the whole folder specified by `INSTALL_SOURCE`;
-  * Copy the zip file to the Installer source folder as an embedded file;
+  * Copy the zip file to the Installer project folder as an embedded file;
   * Re-built the Installer to get the final setup program.
 
 ```
