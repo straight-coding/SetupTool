@@ -129,12 +129,12 @@ REM build library zlib.lib
 %MSBUILD% .\zlib\zlib.vcxproj /t:Rebuild /p:Configuration=Release /p:Platform=x86
 copy /y /b .\zlib\Release\zlib.lib .\Release\zlib.lib
 
-REM rebuild Uninstaller.exe
+REM build Uninstaller.exe
 %MSBUILD% .\UnInstaller\UnInstaller.vcxproj /t:Rebuild /p:Configuration=Release /p:Platform=x86
 REM copy Uninstaller.exe as an install source file
 copy /y /b .\UnInstaller\Release\UnInstaller.exe %INSTALL_SOURCE%\UnInstaller.exe
 
-REM build Installer.exe first to generate a compressor
+REM build Installer.exe first to generate a compressor tool
 %MSBUILD% .\Installer\Installer.vcxproj /t:Rebuild /p:Configuration=Release /p:Platform=x86
 
 REM Installer.exe works like a compressor to pack install source folder to setup.zip 
