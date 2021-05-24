@@ -1,2 +1,2 @@
-# SetupTool
+# A DIY Installer Builder
 
