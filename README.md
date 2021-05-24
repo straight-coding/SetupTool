@@ -99,10 +99,18 @@
 
 ```
 
-# Batch File to Build Installer
+# Batch File to Build the Installer
 
 * build-setup-en-x86.bat or build-setup-en-x64.bat
 * Installer is a x86 program even though your application is x64
+* The idea is:
+  * Copy everything what you want to install to the folder specified by `INSTALL_SOURCE`;
+  * Copy the script file (.json) to the source folder of both Installer and Uninstaller;
+  * Build Uninstaller and copy it to the folder specified by `INSTALL_SOURCE`;
+  * Built the Installer as a compressing tool;
+  * Using the above tool to compress the whole folder specified by `INSTALL_SOURCE`;
+  * Copy the zip file to the Installer source folder as an embedded file;
+  * Re-built the Installer to get the final setup program.
 
 ```
 REM set path of MSBuild.exe
