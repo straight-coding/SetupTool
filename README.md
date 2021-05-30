@@ -98,7 +98,25 @@
     }
   ]
 }
-
+```
+* Local variables in script files
+```
+  %product_name%
+  %product_version%
+  %publisher%
+  %language%
+  %platform%
+  %install_name%
+  %install_folder%
+```
+* Global variables in script files
+```
+  %systemdrive%
+  %systemroot%
+  %windir%
+  %programfiles%
+  %programfiles(x86)%
+  %programdata%
 ```
 
 # Batch File to Build the Installer
