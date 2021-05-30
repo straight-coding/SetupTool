@@ -130,7 +130,7 @@
   * Built the Installer as a compressing tool;
   * Using the above tool to compress the whole folder specified by `INSTALL_SOURCE`;
   * Copy the zip file to the Installer project folder as an embedded resource;
-  * Re-built the Installer to get the final setup program.
+  * Re-build the Installer to get the final setup program.
 
 ```
 REM set path of MSBuild.exe
