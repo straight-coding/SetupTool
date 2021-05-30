@@ -101,22 +101,22 @@
 ```
 * Local variables in script files
 ```
-  %product_name%
+  %product_name%               
   %product_version%
   %publisher%
-  %language%
-  %platform%
-  %install_name%
-  %install_folder%
+  %language%                      // "en", "zh", ...
+  %platform%                      // "x86" or "x64"
+  %install_name%                  // for registry key
+  %install_folder%                // default folder to install
 ```
 * Global variables in script files
 ```
-  %systemdrive%
-  %systemroot%
-  %windir%
-  %programfiles%
-  %programfiles(x86)%
-  %programdata%
+  %systemdrive%                   // "C:", "D:", ...
+  %systemroot%                    // %SystemDrive%\Windows\System32
+  %windir%                        // %SystemDrive%\WINDOWS
+  %programfiles%                  // %SystemDrive%\Program Files
+  %programfiles(x86)%             // %SystemDrive%\Program Files (x86)
+  %programdata%                   // %SystemDrive%\ProgramData
 ```
 
 # Batch File to Build the Installer
