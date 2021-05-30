@@ -177,6 +177,26 @@ public:
 		return TRUE;
 	}
 
+	static int GetNativeSystemProcessorArchitecture()
+	{
+		SYSTEM_INFO si;
+		memset(&si, 0, sizeof(si));
+		GetNativeSystemInfo(&si);
+
+		switch (si.wProcessorArchitecture)
+		{
+		case PROCESSOR_ARCHITECTURE_AMD64:
+		case PROCESSOR_ARCHITECTURE_IA64:
+		case PROCESSOR_ARCHITECTURE_ARM64:
+			return 64;
+		case PROCESSOR_ARCHITECTURE_INTEL:
+			return 32;
+		case PROCESSOR_ARCHITECTURE_UNKNOWN:
+			break;
+		}
+		return 0;
+	}
+
 	static BOOL DirectoryExists(const wchar_t* dirName)
 	{
 		DWORD attribs = ::GetFileAttributesW(dirName);
@@ -1515,16 +1535,6 @@ private:
 		return result;
 	}
 
-	vector<map<CString, CString>> GetShortcuts()
-	{
-		return GetActions(L"shortcut");
-	}
-
-	vector<map<CString, CString>> GetRegistries()
-	{
-		return GetActions(L"registry");
-	}
-
 	void Log(CString strFormat, ...)
 	{
 		if (m_Logger != NULL)
@@ -1850,8 +1860,9 @@ public:
 		strKey.Format(L"SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\%s", GetInstallName());
 
 		REGSAM Rights = KEY_ALL_ACCESS;
-		if (GetPlatform() == L"x86")
-			Rights |= KEY_WOW64_32KEY;
+		int osBits = GetNativeSystemProcessorArchitecture();
+		if (osBits == 64)
+			Rights |= KEY_WOW64_64KEY;
 
 		if (ERROR_SUCCESS == RegOpenKeyExW(HKEY_LOCAL_MACHINE, strKey, 0, Rights, &hKey))
 		{
@@ -1918,6 +1929,89 @@ public:
 
 		CString strCmd = L"cmd.exe /c choice /C Y /N /D Y /T 3 & Del \"" + strUninstaller + L"\" & rmdir \"" + strCodebase + L"\"";
 		ExecuteCommandLine(strCmd, 0, FALSE, FALSE);
+
+		ExitProcess(0);
+	}
+
+	void RegAction(map<CString, CString>& action, const char* type)
+	{
+		CString strType(type);
+
+		if (action.find(L"parent") == action.end())
+			return;
+		if (action.find(L"key") == action.end())
+			return;
+
+		REGSAM Rights = KEY_ALL_ACCESS;
+		if (action.find(L"platform") != action.end())
+		{
+			int osBits = GetNativeSystemProcessorArchitecture();
+			if (osBits == 64)
+			{
+				if (wcsicmp(action[L"platform"], L"os") == 0)
+					Rights |= KEY_WOW64_64KEY;
+				else if (wcsicmp(action[L"platform"], L"x86") == 0)
+					Rights |= KEY_WOW64_32KEY;
+				else if (wcsicmp(action[L"platform"], L"x64") == 0)
+					Rights |= KEY_WOW64_64KEY;
+			}
+		}
+
+		HKEY hRootKey = HKEY_LOCAL_MACHINE;
+		CString strParent = Unescape(action[L"parent"]);
+		if (wcsicmp(strParent, L"HKEY_CLASSES_ROOT") == 0)
+			hRootKey = HKEY_CLASSES_ROOT;
+		else if (wcsicmp(strParent, L"HKEY_CURRENT_USER") == 0)
+			hRootKey = HKEY_CURRENT_USER;
+		else if (wcsicmp(strParent, L"HKEY_USERS") == 0)
+			hRootKey = HKEY_USERS;
+		else if (wcsicmp(strParent, L"HKEY_LOCAL_MACHINE") == 0)
+			hRootKey = HKEY_LOCAL_MACHINE;
+
+		CString strKey = UnescapePath(action[L"key"]);
+
+		HKEY  hKey;
+		wchar_t szValue[2048];
+
+		if (strType == "regdel")
+		{
+			LSTATUS result = RegDeleteKeyEx(hRootKey, strKey, Rights, 0);
+			if (ERROR_SUCCESS != result)
+			{
+			}
+		}
+		else if (strType == "regadd")
+		{
+			CString strFormat = m_LogFormats[L"registry"];
+			Log(strFormat, strKey);
+
+			if (ERROR_SUCCESS == RegCreateKeyExW(hRootKey, strKey, 0, NULL, REG_OPTION_NON_VOLATILE, Rights, NULL, &hKey, NULL))
+			{
+				map<CString, CString>::iterator iter;
+				for (iter = action.begin(); iter != action.end(); iter++)
+				{
+					CString strName = iter->first;
+					if (wcsicmp(strName, L"type") == 0)
+						continue;
+					if (wcsicmp(strName, L"parent") == 0)
+						continue;
+					if (wcsicmp(strName, L"key") == 0)
+						continue;
+					if (wcsicmp(strName, L"platform") == 0)
+						continue;
+
+					CString strValue = Unescape(iter->second);
+					if ((strValue.Mid(1, 2) == L":/") || (strValue.Mid(1, 2) == L":\\"))
+						strValue.Replace(L"/", L"\\");
+
+					wcscpy(szValue, strValue);
+					if (ERROR_SUCCESS != RegSetValueExW(hKey, strName, 0, REG_SZ, (BYTE*)szValue, (wcslen(szValue) + 1) * sizeof(wchar_t)))
+					{
+					}
+				}
+				RegCloseKey(hKey);
+			}
+		}
 	}
 
 	void RunScript(vector<map<CString, CString>> actions)
@@ -1950,60 +2044,13 @@ public:
 
 				CreateLink(strName, strLink, strTarget, strFolder, strIcon);
 			}
-			else if (wcsicmp(strType, L"registry") == 0)
+			else if (wcsicmp(strType, L"regdel") == 0)
 			{
-				if (actions[i].find(L"parent") == actions[i].end())
-					continue;
-				if (actions[i].find(L"key") == actions[i].end())
-					continue;
-
-				HKEY hRootKey = HKEY_LOCAL_MACHINE;
-				CString strParent = Unescape(actions[i][L"parent"]);
-				if (wcsicmp(strParent, L"HKEY_CLASSES_ROOT") == 0)
-					hRootKey = HKEY_CLASSES_ROOT;
-				else if (wcsicmp(strParent, L"HKEY_CURRENT_USER") == 0)
-					hRootKey = HKEY_CURRENT_USER;
-				else if (wcsicmp(strParent, L"HKEY_USERS") == 0)
-					hRootKey = HKEY_USERS;
-				else if (wcsicmp(strParent, L"HKEY_LOCAL_MACHINE") == 0)
-					hRootKey = HKEY_LOCAL_MACHINE;
-
-				CString strKey = UnescapePath(actions[i][L"key"]);
-
-				HKEY  hKey;
-				wchar_t szValue[2048];
-
-				REGSAM Rights = KEY_ALL_ACCESS;
-				if (GetPlatform() == L"x86")
-					Rights |= KEY_WOW64_32KEY;
-
-				CString strFormat = m_LogFormats[L"registry"];
-				Log(strFormat, strKey);
-
-				if (ERROR_SUCCESS == RegCreateKeyExW(hRootKey, strKey, 0, NULL, REG_OPTION_NON_VOLATILE, Rights, NULL, &hKey, NULL))
-				{
-					map<CString, CString>::iterator iter;
-					for (iter = actions[i].begin(); iter != actions[i].end(); iter++)
-					{
-						CString strName = iter->first;
-						if (wcsicmp(strName, L"type") == 0)
-							continue;
-						if (wcsicmp(strName, L"parent") == 0)
-							continue;
-						if (wcsicmp(strName, L"key") == 0)
-							continue;
-
-						CString strValue = Unescape(iter->second);
-						if ((strValue.Mid(1, 2) == L":/") || (strValue.Mid(1, 2) == L":\\"))
-							strValue.Replace(L"/", L"\\");
-
-						wcscpy(szValue, strValue);
-						if (ERROR_SUCCESS != RegSetValueExW(hKey, strName, 0, REG_SZ, (BYTE*)szValue, (wcslen(szValue) + 1) * sizeof(wchar_t)))
-						{
-						}
-					}
-					RegCloseKey(hKey);
-				}
+				RegAction(actions[i], "regdel");
+			}
+			else if (wcsicmp(strType, L"regadd") == 0)
+			{
+				RegAction(actions[i], "regadd");
 			}
 			else if (wcsicmp(strType, L"execute") == 0)
 			{
@@ -2049,20 +2096,10 @@ public:
 					pExecutor->SetRedirect(TRUE);
 					pExecutor->SetWait(TRUE);
 
-					if ((wcsicmp(strCmd.Left(4), L"cmd ") != 0) &&
-						(wcsicmp(strCmd.Left(4), L"cmd.") != 0) &&
-						(strCmd.FindOneOf(L"()") < 0))
-						//(wcsicmp(strCmd.Left(4), L"reg.") != 0))
-					{
-						strCmd = L"cmd.exe /c \"" + strCmd + L"\"";
-					}
-					else
-					{
-						if (strCmd.Left(1) != L"\"")
-							strCmd = L"\"" + strCmd;
-						if (strCmd.Right(1) != L"\"")
-							strCmd += L"\"";
-					}
+					if (strCmd.Left(1) != L"\"")
+						strCmd = L"\"" + strCmd;
+					if (strCmd.Right(1) != L"\"")
+						strCmd += L"\"";
 
 					CString strFormat = m_LogFormats[L"execute"];
 					Log(strFormat, strCmd + L" " + strArguments);

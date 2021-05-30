@@ -42,7 +42,8 @@
       "startin": "%install_folder%"
     },
     {
-      "type": "registry",
+      "type": "regadd",
+      "platform": "os",
       "parent": "HKEY_LOCAL_MACHINE",
       "key": "SOFTWARE/Microsoft/Windows/CurrentVersion/Uninstall/%install_name%",
       "DisplayName": "%install_name%",
@@ -62,28 +63,29 @@
   "on_uninstall": [
     {
       "type": "execute",
-      "command": "del",
-      "parameters": "/Q '%SystemDrive%/Users/Public/Desktop/%install_name%.lnk'"
+      "command": "cmd.exe /c",
+      "parameters": "del /Q '%SystemDrive%/Users/Public/Desktop/%install_name%.lnk'"
     },
     {
       "type": "execute",
-      "command": "del",
-      "parameters": "/Q '%ProgramData%/Microsoft/Windows/Start Menu/Programs/%install_name%/%install_name%.lnk'"
+      "command": "cmd.exe /c",
+      "parameters": "del /Q '%ProgramData%/Microsoft/Windows/Start Menu/Programs/%install_name%/%install_name%.lnk'"
     },
     {
       "type": "execute",
-      "command": "del",
-      "parameters": "/Q '%ProgramData%/Microsoft/Windows/Start Menu/Programs/%install_name%/Uninstaller.lnk'"
+      "command": "cmd.exe /c",
+      "parameters": "del /Q '%ProgramData%/Microsoft/Windows/Start Menu/Programs/%install_name%/Uninstaller.lnk'"
     },
     {
       "type": "execute",
-      "command": "rmdir",
-      "parameters": "'%ProgramData%/Microsoft/Windows/Start Menu/Programs/%install_name%'"
+      "command": "cmd.exe /c",
+      "parameters": "rmdir '%ProgramData%/Microsoft/Windows/Start Menu/Programs/%install_name%'"
     },
     {
-      "type": "execute",
-      "command": "reg.exe",
-      "parameters": "delete 'HKEY_LOCAL_MACHINE/SOFTWARE/Microsoft/Windows/CurrentVersion/Uninstall/%install_name%' /f"
+      "type": "regdel",
+      "platform": "os",
+      "parent": "HKEY_LOCAL_MACHINE",
+      "key": "SOFTWARE/Microsoft/Windows/CurrentVersion/Uninstall/%install_name%"
     }
   ]
 }
