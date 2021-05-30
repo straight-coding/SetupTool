@@ -109,7 +109,7 @@
   %install_name%                  // for registry key
   %install_folder%                // default folder to install
 ```
-* Global variables in script files
+* System variables in script files
 ```
   %systemdrive%                   // "C:", "D:", ...
   %systemroot%                    // %SystemDrive%\Windows\System32
