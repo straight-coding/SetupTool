@@ -51,7 +51,8 @@
       "startin": "%install_folder%"
     },
     {
-      "type": "registry",
+      "type": "regadd",
+      "platform": "os",
       "parent": "HKEY_LOCAL_MACHINE",
       "key": "SOFTWARE/Microsoft/Windows/CurrentVersion/Uninstall/%install_name%",
       "DisplayName": "%install_name%",
@@ -71,32 +72,51 @@
   "on_uninstall": [
     {
       "type": "execute",
-      "command": "del",
-      "parameters": "/Q '%SystemDrive%/Users/Public/Desktop/%install_name%.lnk'"
+      "command": "cmd.exe /c",
+      "parameters": "del /Q '%SystemDrive%/Users/Public/Desktop/%install_name%.lnk'"
     },
     {
       "type": "execute",
-      "command": "del",
-      "parameters": "/Q '%ProgramData%/Microsoft/Windows/Start Menu/Programs/%install_name%/%install_name%.lnk'"
+      "command": "cmd.exe /c",
+      "parameters": "del /Q '%ProgramData%/Microsoft/Windows/Start Menu/Programs/%install_name%/%install_name%.lnk'"
     },
     {
       "type": "execute",
-      "command": "del",
-      "parameters": "/Q '%ProgramData%/Microsoft/Windows/Start Menu/Programs/%install_name%/Uninstaller.lnk'"
+      "command": "cmd.exe /c",
+      "parameters": "del /Q '%ProgramData%/Microsoft/Windows/Start Menu/Programs/%install_name%/Uninstaller.lnk'"
     },
     {
       "type": "execute",
-      "command": "rmdir",
-      "parameters": "'%ProgramData%/Microsoft/Windows/Start Menu/Programs/%install_name%'"
+      "command": "cmd.exe /c",
+      "parameters": "rmdir '%ProgramData%/Microsoft/Windows/Start Menu/Programs/%install_name%'"
     },
     {
-      "type": "execute",
-      "command": "reg.exe",
-      "parameters": "delete 'HKEY_LOCAL_MACHINE/SOFTWARE/Microsoft/Windows/CurrentVersion/Uninstall/%install_name%' /f"
+      "type": "regdel",
+      "platform": "os",
+      "parent": "HKEY_LOCAL_MACHINE",
+      "key": "SOFTWARE/Microsoft/Windows/CurrentVersion/Uninstall/%install_name%"
     }
   ]
 }
-
+```
+* Local variables in script files
+```
+  %product_name%               
+  %product_version%
+  %publisher%
+  %language%                      // "en", "zh", ...
+  %platform%                      // "x86" or "x64"
+  %install_name%                  // for registry key
+  %install_folder%                // default folder to install
+```
+* System variables in script files
+```
+  %systemdrive%                   // "C:", "D:", ...
+  %systemroot%                    // %SystemDrive%\Windows\System32
+  %windir%                        // %SystemDrive%\WINDOWS
+  %programfiles%                  // %SystemDrive%\Program Files
+  %programfiles(x86)%             // %SystemDrive%\Program Files (x86)
+  %programdata%                   // %SystemDrive%\ProgramData
 ```
 
 # Batch File to Build the Installer
@@ -109,8 +129,8 @@
   * Build Uninstaller and copy it to the folder specified by `INSTALL_SOURCE`;
   * Built the Installer as a compressing tool;
   * Using the above tool to compress the whole folder specified by `INSTALL_SOURCE`;
-  * Copy the zip file to the Installer project folder as an embedded file;
-  * Re-built the Installer to get the final setup program.
+  * Copy the zip file to the Installer project folder as an embedded resource;
+  * Re-build the Installer to get the final setup program.
 
 ```
 REM set path of MSBuild.exe
