@@ -25,6 +25,7 @@
 #define IDS_CONFIRM                     145
 #define IDS_LOG_REGISTRY                146
 #define IDS_LOG_EXECUTE                 147
+#define IDS_PLATFORM_ERR                148
 #define IDB_INSTALL_HEADER              1001
 #define IDC_BUTTON_INSTALL              1002
 #define IDC_LIST_LOG                    1003

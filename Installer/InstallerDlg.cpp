@@ -80,11 +80,22 @@ BOOL CInstallerDlg::OnInitDialog()
 
 	UpdateData(FALSE);
 
+	CString strFormat, strWarn;
+
+	int osBits = CInstallUtil::GetNativeSystemProcessorArchitecture();
+	if ((osBits == 32) && (m_Installer.GetPlatform() == L"x64"))
+	{
+		strWarn.LoadStringW(IDS_PLATFORM_ERR);
+		if (IDYES != ::MessageBox(NULL, strWarn, m_strTitle, MB_ICONINFORMATION | MB_SETFOREGROUND | MB_TOPMOST | MB_YESNO))
+		{
+			EndDialog(0);
+			return TRUE;
+		}
+	}
+
 	CString strRunning = m_Installer.GetRunning();
 	if (!strRunning.IsEmpty())
 	{
-		CString strFormat, strWarn;
-
 		strFormat.LoadStringW(IDS_STILL_RUNNING);
 		strWarn.Format(strFormat, L"\r\n" + strRunning);
 
@@ -97,9 +108,7 @@ BOOL CInstallerDlg::OnInitDialog()
 	CString strUninstaller = m_Installer.GetUninstaller();
 	if (!strUninstaller.IsEmpty())
 	{
-		CString strFormat;
 		strFormat.LoadStringW(IDS_CONFIRM);
-		CString strWarn;
 		strWarn.Format(strFormat, m_Installer.GetProductName());// +L" @ " + CInstallUtil::GetCodeBase());
 
 		if (IDYES != ::MessageBox(NULL, strWarn, m_strTitle, MB_ICONINFORMATION | MB_SETFOREGROUND | MB_TOPMOST | MB_YESNO))
